@@ -1,0 +1,169 @@
+1-ASP.Net Core u seçtik ve içindeki web application(controller) olaný seçtik.
+2-Projeye sað týk yapýp ADD/ Client-Side Librariesi açtýk.
+Ýçinden twitter bootstrapý seçtik.Include seçiliyken alttaki twitter yazsýný silip okeyledik.
+Böylece bootstrapýmýz 4.4.1 olmuþ oldu.Ayný þekilde gelip bu sefer jquery yazýp ayný iþlemi yaptýk.
+3-Node Js yoksa indir.
+4-Projeye sað týk/Add/New Item/arama yerine npm yazýp oluþturdum.Oluþturduðum sayfaya eklediðim kodlarý save edince,saðdaki
+Dependencies in içince npm oluþtu.
+5-Projenin üst kýsmýndaki küçük simgelerdeki Show All a basýnca node_modules gözüktü.Ona sað týk include yaptýk.
+6-layoutta linklerin arasýna node_modules/bootstrap/dist/css/bootstrap-grid.css linkini sürükledim baþýna ~/vendor yazdým.
+7-npm bootstrap chrome sayfasýna girip ordaki kodu kopyalayýp nuget package consoleye yapýþtýrýp enterladým.Bir þeye yaramadý.
+8-Entity adýnda folder oluþturdum.Ýçinde Product,Category adýnda class açtým.
+8-Repository adýnda folder oluþturduk.Ýçine abstract ve Concrete adlarýnda folder oluþturduk.Concretenin içine EntityFramework adýnda
+yeni folder açtým.Onun içine de EduraContext adýnda class açtým.
+9-Entitynin içine ProductCategory adýnda class açtýk.
+10-SQL baðlantýmý yaptým.(appsettinsin içindeki kodlarý silip 
+{
+  "ConnectionStrings": {
+    "DefCon": "Data Source=.;Initial Catalog=EduraDb;User Id=sa;Password=12345;MultipleActiveResultSets=true"
+  } 
+}
+ ve startupta services olan kýsma
+services.AddDbContext<EduraContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefCon")));) ekledim.
+11-Projeye sað týk open týkladým sonra açýlan dosyada en üste cmd yazýp enterladým ve oraya 'dotnet ef migrations add Initial' yazdým.
+12-Projeye sað týk Edit Project File seçeneðine basýp. Edura.WebUI a girip 299. satýra kod ekledik.
+13-Siyah ekrana dönüp dotnet ef yazdýk.
+14-Sonra siyah ekrana dotnet ef database update yazdýk ve databasemiz oluþtu.
+15-Entitynin içine Order ve OrderLine adlarýnda class ekledik.
+16-Abstractýn içine Ýnterface ekledim (IProductRepository)
+17-Repositorynin içindeki Concrete nin içine EfProductRepository adýnda class oluþturduk.
+18-HomeControllerdeki indexe sað týk go to view yapýp en üstteki ViewData hariç her þeyi sildik.
+19-Shared/ViewImports içindeki using kýsmýna Edura.WebUI.Entity ekledik.Böylece bunu hiçbir yerde tekrar usinglememe gerek kalmýyor.
+20-indexin içine kodlar ekledik.
+21-EntityFramework un içine SeedData adýnda class açtýk.Ýçini doldurduk.
+22-startupta Configure metodunun en sonuna Seed datayý tanýttýk en altýnda (SeedData.EnsurePopulated(context));
+parantez içi appken hata aldýk sonra EduraContexti tanýmlayýp hem seedDatada hem de startupda.O yüzden context oldu.
+23-IProductRepository ve EfProductRepository i doldurduk.
+24-ayný þeyleri IProductRepo ve EfProRepo için yaptýk
+25-Abstractýn içine IGenericRepository adýnda interface ekledim.Kodlarý kopyala yapýþtýr yaptým.
+26-Sonra EfCategoryRepositorydeki miras alýnan ICategoryRepository i silip yerine IGenericRepository<Category> yazdým.
+Ayný þeyi product için de yaptým.
+27-EntityFramework içinde EfGenericRepository adýnda class oluþturdum.
+28-IGenericRepositoryi miras alýp implement edip kod kýsýmlarýný doldurduk.
+29-EfCategoryRepositorynin içini full sildik(Yoruma aldým) ve EfGenericRepo ve ICategoryRepositoryi miras aldým o yoruma aldýðým iþlemleri
+kýsaltmýþ oldum.
+30-Ayný iþlemleri EfProductRepositorye yaptým.
+31-Sonra ICategory ve IProductun içindeki her þeyi yoruma alýp IGenericRepoyu miras alýnca zaten içindeki kodlarý otomatik algýlýyor
+görünmese bile.Ýçinde olmayan bir kod yazacaksam örneðin GetByName ekliyorum. 
+32-Örneðin IProductRepo veya ICategoryRepo nun içine bir metod aldým.EfProRepo veya EfCateRepo nun içinde girince bunlarý miras aldýðým
+için altýný çizecek çünkü interface olduðu için o eklediðim metodlar eksik kaldý.Altý çiziliyken implement edince o metodlarý da otomatik
+ekleyecek sorun çözülecek.
+33-Contoller a CategoryController ekledik.
+34-Startupta services.addtransiyet ekledim IProductRepoyu.
+35-Yukarýdaki çalýþtýrma yerini Edura WebUI yapýp çalýþtýrýyorum.Siyah ekran projemizin nasýl çalýþtýðý hakkýnda bilgi veriyor
+ kaç saniye vs.
+36-CategoryControllerin içine kodlar ekledik.Ýçerisindeki indexe sað týk yapýp add view dedik.Indexin içine de modeller ekledik.
+37-Her seferinde EfCategory veya EfProduct vs. hepsinde DbContexi tekrar tekrar çalýþtýrýyorum.
+Onun yerine Repository mantýðýyla tek yerde oluþturup daðýtýcam.
+Abstractýn içine IUnitOfWork adýnda interface açtým ve publicledim.Ýçine kodlar ekledim.
+38-EntityFrameworkun içine EfUnitOfWork adýnda class ekledik. IUnitOfWork ü miras alýp implement edip içini doldurduk.
+39-HomeControllerýn içine IUniofworkü ekledik.
+40-Startupun içine addtransiet yaptýk IUnitofworkü.
+41-Projeyi çalýþtýrdýðýmýzda adres çubuðunun sonuna /Home/Create ekleyince sitemize ürün eklemiþ oldu.
+42-Hocadan HTML-CSS kodlarýnýn olduðu edura dosyasýný aldýk.Bu dosyayý wwwrootun içine sürükledik.
+43-edura dosyasýnýn içindeki shop-catalog-sidebar-left.html nin içindeki tüm kodlarý kopyaladýk shared ýn içindeki Layoutun içindeki
+tüm kodlarý silip buraya yapýþtýrdýk.
+44-Layoutun içindeki 150. satýrdan kapatýyoruz ve o satýrý siliyoruz yerine @RenderBody() yazýyoruz. (section id="context")in altýndaki satýr.
+45-RanderBody bundan sonra indexin içindeki kodlarý olduðu yere yapýþtýracak yukarýsý header aþaðýsý footer.
+46-Layoutun içindeki link ve script kodlarýndaki src ve href baðlantýlarýnýn baþýna "~/edura/" yazýsýný tek tek yapýþtýrdým.
+47-Toolstaki Extencions and Update ye týklayýp soldan online yi seçip bundle yazýp ikinci sýradakini indirdik.
+48-Linklerin içerisindeki href dosyalarýný saðdaki eduradan eþleþtirerek ctrl ye basýlý þekilde sýrasýný bozmadan seçip
+sað týklayýp bundle modified seçeneðini seçtik.Açýlan yerde yeni klasör oluþturup (Css adýnda) o klasörün içine kaydettik bundle klasörünü.
+49-Layoutun içine girip bu link kodlarýnýn olduðu yeri (yorum satýrýndaki LOAD MAIN CSS den heada kadar olan yeri)siliyorum.
+yerine css dosyasýnda oluþan bundle.css dosyasýný oraya sürüklüyorum.
+50-Bu sefer ayný þeyi scriptteki src ler için yapýp tek tek seçip sað týk bundle yapýyorum.
+Bu sefer wwwroottaki js dosyasýnýn içine ekliyorum.
+Sonra bu scriptleri silip yerine wwwrootun/js nin içindeki bundle.js yi sürükleyip sildiklerimin yerine atýyorum.
+51-Eduranýn hemen altýndaki image dosyasýnýn içindeki 3 tane þeyi sildim.Sonra eduranýn içindeki image dosyasýnýn içindeki her þeyi
+ctrl ile seçip normal imagenin içine sürükledim.
+52-shop-catalog-sidebar-left.html içindeki 174. satýra gelip (<section id="content">) ordan kapatýp o satýrý kopyalayýp
+Home içerisindeki indexin h2 li kýsmýný silip oraya yapýþtýrýyorum.
+53-Sonra Layout içerisindeki @RenderBodynin altýndaki ve üstündeki section bloklarýný siliyorum ve projeyi çalýþtýrýyorum.
+
+
+
+
+01- Product tablosuna eklemeler yaptýk.
+02- SeedData da product tablosunda eklediðimiz özellikleri deðer atadýk.
+03- EduraDb yi sildik. Cmd yi açtýk. "dotnet ef migrations add UpdateProductEntity" yazdýk. 
+Sonra "dotnet ef database update" yazdýk.Tablo bilgilerimiz güncellenmiþ oldu. Projeyi çalýþtýrarak verilerin gelmesini saðlýyoruz.
+04- Projeye Components adýnda bir dosya açýp içine CategoryMenu adýnda bir class ekliyoruz.
+Ýçinde dependency injection iþlemini yaptýk.(repo =_repo)
+05- Model ýn içine CategoryModel ý oluþturuyoruz. ve içini dolduruyoruz. 
+06- ICategoryRepository ye IEnumerable tipinde bir metod oluþturuyoruz. EfCategoryRepository de Icrepo yu implemente ediyoruz.
+07- CategoryMenu viewcomponent den miras aldýktan sonra class ý içinde Invoke() metodu oluþturuyoruz.
+08- Shared ýn içine Components adýnda bir klasör onun içine de CategoryMenu adýnda bir klasör oluþturyoruz. 
+View ekliyoruz içine default adýnda bir view partial olacak. içine Home/Index teki categories widget ýný kesip Default a yapýþtýrdýk.
+09- Default.cshtml de ul un içine bir foreach döngüsü oluþturuyoruz.
+10- indexte widgetý aldýðýmýz yere @await Component.InvokeAsync("CategoryMenu") yazýyoruz.
+11- indexin içinde right column start kýsmýný düzenliyoruz.
+12- wwwroot>images>products a Thumb adýnda bir klasör ekliyoruz. Dosyadaki ilgili resimleri içine atýyoruz.
+(Thumb uzantýlý olan resimler büyük olanlar)
+13- Shared>Components>FeaturedProducts ekledik. Onun içine default view ekledik. widget ý içine taþýdýk. 
+14- Components in içine FeaturedProducts adýnda bir class ekliyoruz.
+15- Dependency Injection iþlemini yaptýktan sonra Invoke metodunu oluþturuyoruz.
+16- Index in içinde widget ý aldýðýmýz yere ayný kodu yazýyoruz. 
+17- Index te right column start ýn altýndaki col-xs-4 olan divi sildik. 
+col-xs-8 olan div in içinde p tagýnýn içine There are @Model.Count() yazdýk.
+18- Controller ýn içine ProductController oluþturuyoruz. Dependency Injection iþlemini burada da yapýyoruz. 
+Details(int id) adýnda bir IActionResult oluþturuyoruz.
+19- Entity içine Image adýnda bir class oluþturduk. Ýçine prop larý oluþturduk.Products class ýna da Image baðlantýsýný oluþturduk.
+20- Entity içine ProductAttribute adýnda bir class daha oluþturup prop larýný oluþturduk. Product class ý ile bunun da baðlantýsýný kuruyoruz.
+21- Product tablosuna description,htmlcontent,dateadded özelliklerini ekledik.
+22- Eklediðimiz tablolarý EduraContext in içine de ekliyoruz. 
+23- SeedData içinde product a eklediðimiz sütunlarý dolduruyoruz. Ve yine seeddata da eklediðimiz tablolara veri atýyoruz.
+24- Db yi silip CMD içine "dotnet ef migrations add addNewEntity" yazdýk. 
+
+
+1-ProductControllerin içindeki detailse kodlar ekledik
+2-Modele ProductDetailsModel adýnda class ekliyorum.Ýçini proplarla doldurup ProductControllerdaki altý çizili yer düzelmiþ oluyor
+3-wwwrootun içindeki edura dosyasýndaki shop-product-sidebar-left.html nin içindeki 174. satýrdan kapattým
+<!-- CONTENT START --> bunun altýntakini.
+4-ProductControllerdaki detailse sað týk add view yaptýk partial view kullanmadýk layout kullandýk.
+5-Bu kapattýðým 174. satýrý kopyalayýp datailsin içine yapýþtýrdým.Yukarýya @model ekledim.
+6-Deailsteki 26.ve 39. satýrlarý kapattým (vidget) ve sildim. sonra @await kodlarý ekledim.
+7-https://owlcarousel2.github.io/OwlCarousel2/demos/demos.html bu siteye girdik.
+8-41. satýrdaki col-md-6 nýn altýndaki satýrdaki divin içine kodlar ekledik. Hemen altýna @foreach açýp altýndaki divlerden
+ikisini silip birini düzenleyip foreach içine alýyorum.
+9-Sonra ikinci col-md-6 lýk kýsmýn içine düzenlemeler yapýyorum.
+10-detailsin 96.satýrýndaki tab-contentin altýndaki p taglarýný silip içine kod ekliyorum.Alttaki table tagýnýn içine de eklemeler yapýyorum.
+11-startupun içine yeni bi routes kodu ekliyorum 
+12-ProductController ýn içine List adýnda actionresult ekliyorum.Bide yukarýda PageSize tanýmladým.
+13-Model klasörünün içine PagingInfo adýnda class oluþturdum.Ýçini doldurduk.ProductListModel falan yazdýk.
+14-ProductControllere dönüp list action resultunun içindeki  return View in içini doldurduk.Sonra sað týk yapýp liste add view yapýyoruz.
+15-Indexin içindeki her þeyi kopyalayýp list e yapýþtýrýyorum ve düzenlemeler yapýyorum.
+16-Viewdeki sharede add view yapýp _ProductItem oluþturuyorum. (Partial view seçili sadece).sonra bunun içine foreachýn içindeki yeri kesip
+_productItemin içine yapýþtýrýyorum düzenlemeler yapýyorum yukarýya @model Pro yazýyorum  sonra _PatrialItemi o kestiðim foreachýn içine tanýtýyorum.
+17-projeye sað týk Infrastructure adýnda folder oluþturdum içine PageLingTagHelper adýnda class oluþturduk ve içini doldurduk.
+(Classý ve override metodlu classýn içini) Sonra bunu ViewImportsa tanýttýk.build edince List içindeki div in rengi deðiþti.
+Sonra çalýþtýrýnca /products yazýnca istediðim gibi çalýþtý.
+
+1-Modele sað týk Cart adýnda class açýp içini doldurduk.
+2-controllera sað týk Cart adýnda boþ controller ekledik.içini doldurduk.https://www.w3schools.com/js/js_json_intro.asp
+https://www.newtonsoft.com/json linlerinden kod örneði baktýk.
+3-Infrastructurenin içine SessionExtentions aýnda class açtým ve içini doldurdum.
+4-startupun içine kodlar ekledik.
+5-cartcontrollera RemoveFromCart metod açtýk içini doldurduk.
+6-cartcontrollerdaki indexe sað týk add view.
+7-Viewsin içinde Productýn içindeki Detailsin 63.satýrýndan 72 ye kadar kodlar ekliyorum
+8-wwwrootun içinde eduranýn içindeki shop-cart.html nin içindeki 176.satýrdaki <section id="content"> satýrýndan kapatýp
+kopyalayýp cartcontrollarýn indexine yapýþtýrýyorum.
+9-25.satýrdaki bodynin içindeki trleri kapatýp üçünü silip birini tutuyorum.Oraya foreach açýp onun içine kesip atýyorum.
+Onun içinde de düzenlemeler yapýyoruz.
+10-Componente sað týk CartSummaryViewComponent adýnda class açtýk içini doldurduk.
+11-Cartýn indexinin 63.satýrdan sonrasýna kodlar ekledik.
+
+
+1-Projeye sað týk yeni folder IdentityCore
+2-Identitcoreye sað týk ApplicationUser adýnda class oluþturduk içini doldurduk.
+3-Yine ýdentitycoreye sað týk ApplicationIdentityDbContext adýnda class açtýk ve içini doldurduk.
+4-appsettingse yeni baðlantý ekledik.
+5-startupýn içine yeni baðlantýmýzý services kodlarý ile tanýttýk.Bide addtrensi kodu ekledik.
+6-IdentityCore ye sað týk SeedIdentity adýnda class açýp içini doldurduk.
+7-Startupa gelip seedIdentitiyi tanýtýyorum.
+8-projeye sað týk opena týklayýp cmd yi açtým ve dotnet ef migrations add InitIdentityDb -c ApplicationIdentityDbContext yazdým.Hata aldýk
+o yüzden
+9-DesignTimeIdentityDbContextFactory adýnda IdentityCore a class açtým.Ýçini doldurdum.sonra tekrar yukardakini cmd ye yazdým.
+10-dotnet ef database update -c ApplicationIdentityDbContext hata çözüldükten sonra bunu yazdým ve databasem oluþtu.
+11-startupun içine app.useauto kodu ekledim.
+Filezilla indir
